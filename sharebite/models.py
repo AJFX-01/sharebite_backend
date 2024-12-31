@@ -23,6 +23,12 @@ class Donation(models.Model):
         User, null=True, blank=True, on_delete=models.SET_NULL, related_name='reserved_donations'
     )
 
+    def cancel_reservation(self):
+        """ Pick up of donation cancelled """
+        self.is_delivered = False
+        self.reserved_by = None
+        self.save()
+
 # Proof Model
 class Proof(models.Model):
     """ Basic Proofs """
@@ -35,5 +41,17 @@ class Proof(models.Model):
 class DropOffsite(models.Model):
     """ Drop off sites """
     location = models.CharField(max_length=255)
-    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='added_sites')
+    added_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name='added_sites')
     created_at = models.DateTimeField(auto_now_add=True)
+
+# Reciepts
+class Receipt(models.Model):
+    """ Receipt Models """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receipts')
+    donation = models.ForeignKey(Donation, on_delete=models.CASCADE, related_name='receipts')
+    pickup_date = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Receipt for {self.donation.title} by {self.user.username}"
