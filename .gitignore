@@ -1,0 +1,16 @@
+.env/
+.envvenv/
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+myenv
+db.sqlite3
+*.log
+*.pot
+*.py[cod]
+.DS_Store
+.idea/
+*.env
+*.pid
+docker-compose.override.yml
