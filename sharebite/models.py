@@ -1,3 +1,39 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
+
+# user model
+class User(AbstractUser):
+    """ Base user types """
+    is_donor = models.BooleanField(default=False)
+    is_receiver = models.BooleanField(default=False)
+
+# Donations Model
+class Donation(models.Model):
+    """ Base donation models """
+    donor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='donations')
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    location = models.CharField(max_length=255)
+    is_reserved = models.BooleanField(default=False)
+    is_delivered = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reserved_by = models.ForeignKey(
+        User, null=True, blank=True, on_delete=models.SET_NULL, related_name='reserved_donations'
+    )
+
+# Proof Model
+class Proof(models.Model):
+    """ Basic Proofs """
+    donation = models.OneToOneField(Donation, on_delete=models.CASCADE, related_name='proof')
+    proof_image = models.ImageField(upload_to='proofs/')
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+# Admin Drop- Off Sites
+class DropOffsite(models.Model):
+    """ Drop off sites """
+    location = models.CharField(max_length=255)
+    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='added_sites')
+    created_at = models.DateTimeField(auto_now_add=True)
