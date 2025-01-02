@@ -4,8 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from .models import User, Donation, Proof, DropOffsite
-from .serializers import UserSerializer, DonationSerializer, ProofSerializer, DropOffSiteSerializer
+from .models import Receipt, User, Donation, Proof, DropOffsite
+from .serializers import (
+    ReceiptSerializer, UserSerializer, DonationSerializer, ProofSerializer, DropOffSiteSerializer)
 
 
 # Register View
