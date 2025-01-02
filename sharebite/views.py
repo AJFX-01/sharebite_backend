@@ -22,7 +22,7 @@ class RegisterView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Login View   
+# Login View
 class LoginView(ObtainAuthToken):
     """ METHOD TO LOGIN """
     def post(self, request, *args, **kwargs):
