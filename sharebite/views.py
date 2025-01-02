@@ -54,7 +54,7 @@ class DonationDetailView(APIView):
         except Donation.DoesNotExist:
             return Response({"error": "Donation not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = DonationSerializer(donation)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
 # Admin Drop-Off Sites View
 class DropOffSiteView(APIView):
@@ -73,4 +73,45 @@ class DropOffSiteView(APIView):
     def get(self, request):
         sites = DropOffsite.objects.all()
         serialzer = DropOffSiteSerializer(sites, many=True)
-        return Response(serialzer.data)
+        return Response(serialzer.data, status=status.HTTP_200_OK)
+
+# Reserve Donation View
+class ReserveDonationView(APIView):
+    """ Reservation APis """
+    def post(self, request, donation_id):
+        """ reserve a particular donation """
+        try:
+            donation = Donation.objects.get(pk=donation_id, is_reserved=False)
+        except Donation.DoesNotExist:
+            return Response({"error": "Donation not available for reservation."},
+            status=status.HTTP_404_NOT_FOUND)
+
+        donation.is_reserved = True
+        donation.reserved_by = request.user
+        donation.save()
+        return Response({"message": "Donation reserved successfully."}, status=status.HTTP_200_OK)
+
+# View Receipt History
+class ReceiptHistoryView(APIView):
+    """ Reciepts  Apis"""
+    def get(self, request):
+        """ retrieve a particular receipt """
+        receipts = Receipt.objects.filter(user=request.user)
+        serializer = ReceiptSerializer(receipts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+# Cancel Pickup
+class CancelPickupView(APIView):
+    """ Cancel Pickup """
+    def post(self, request, donation_id):
+        """ poat donation data """
+        
+        try:
+            donation = Donation.objects.get(pk=donation_id, reserved_by=request.user, is_reserved=True)
+        except Donation.DoesNotExist:
+            return Response({"error": "You cannot cancel this reservation."},
+            status=status.HTTP_404_NOT_FOUND)
+
+        donation.cancel_reservation()
+        return Response({"message": "Reservation canceled successfully."},
+        status=status.HTTP_200_OK)
