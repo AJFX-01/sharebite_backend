@@ -6,7 +6,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         """ meta """
         model = User
-        fields = ['id', 'usernname', 'email', 'is_donor', 'is_receiver']
+        fields = ['id', 'usernname', 'first_name', 'last_name' 'email', 'is_donor', 'is_receiver']
 
 class DonationSerializer(serializers.ModelSerializer):
     """ Donation serialize """
