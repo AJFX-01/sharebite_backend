@@ -105,7 +105,7 @@ class CancelPickupView(APIView):
     """ Cancel Pickup """
     def post(self, request, donation_id):
         """ poat donation data """
-        
+
         try:
             donation = Donation.objects.get(pk=donation_id, reserved_by=request.user, is_reserved=True)
         except Donation.DoesNotExist:
@@ -115,3 +115,19 @@ class CancelPickupView(APIView):
         donation.cancel_reservation()
         return Response({"message": "Reservation canceled successfully."},
         status=status.HTTP_200_OK)
+    
+# Proof Upload View
+class ProofUploadView(APIView):
+    """ PRoof Upload api """
+    def post(self, request, donation_id):
+        """ proof for a particular donation """
+        try:
+            donation = Donation.objects.get(pk=donation_id)
+        except Donation.DoesNotExist:
+            return Response({"error": "Donation not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = ProofSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(donation=donation, uploaded_by=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
