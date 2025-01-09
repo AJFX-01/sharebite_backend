@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sharebite',
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
     'corsheaders',
 ]
 
@@ -140,8 +140,8 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4500/",
-    "https://localhost:4500/",
+    "http://localhost:4500",
+    "https://localhost:4500",
 ]
 
 CORS_ALLOW_METHODS = [
