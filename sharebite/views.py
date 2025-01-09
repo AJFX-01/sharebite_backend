@@ -3,8 +3,10 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework import status, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authtoken.models import Token
 from .models import Receipt, Donation, DropOffsite
 from .serializers import (
@@ -14,6 +16,8 @@ from .serializers import (
 # Register View
 class RegisterView(APIView):
     """ METHOD CALL FOR REGISTER """
+
+    permission_classes = [AllowAny]
     def post(self, request):
         """ POST METHOD """
         serializer = UserSerializer(data=request.data)
@@ -24,12 +28,43 @@ class RegisterView(APIView):
 
 # Login View
 class LoginView(ObtainAuthToken):
-    """ METHOD TO LOGIN """
+    """Method to login"""
+
     def post(self, request, *args, **kwargs):
-        """ POST METHOD """
-        response = super().post(request, *args, **kwargs)
-        token = Token.objects.get(key=response.data['token']) # pylint: disable=no-member
-        return Response({'token': token.key, 'user_id': token.user_id })
+        """POST method with error handling"""
+        try:
+            response = super().post(request, *args, **kwargs)
+            token_key = response.data.get('token')
+            
+            if not token_key:
+                raise AuthenticationFailed('Token generation failed. Please check your credentials.')
+            try:
+                token = Token.objects.get(key=token_key)  # pylint: disable=no-member
+                user = token.user  
+            except Token.DoesNotExist: # pylint: disable=no-member
+                return Response({'error': 'Invalid token. Authentication failed.'}, \
+                                 status=status.HTTP_401_UNAUTHORIZED)
+            user_data = {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'is_donor': getattr(user, 'is_donor', False),
+                'is_receiver': getattr(user, 'is_receiver', False),
+            }
+            
+            return Response({
+                'token': token.key,
+                'user_id': user_data,
+            }, status=status.HTTP_200_OK)
+
+        except AuthenticationFailed as e:
+            return Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        except Exception as e:
+            return Response(f"error: invalid email or passwword, {e}",\
+                             status=status.HTTP_400_BAD_REQUEST)
 
 # Donation Views
 class DonationListView(APIView):
