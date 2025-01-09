@@ -114,7 +114,7 @@ class CancelPickupView(APIView):
 
         donation.cancel_reservation()
         return Response({"message": "Reservation canceled successfully."},
-        status=status.HTTP_200_OK)  
+        status=status.HTTP_200_OK)
 # Proof Upload View
 class ProofUploadView(APIView):
     """ PRoof Upload api """
