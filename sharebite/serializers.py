@@ -1,5 +1,6 @@
 """ Serailizers """
 from rest_framework import serializers
+from django.contrib.auth.hashers import make_password
 from .models import User, Donation, Proof, DropOffsite, Receipt
 
 class UserSerializer(serializers.ModelSerializer):
@@ -7,13 +8,15 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         """ meta """
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'password', 'email', 'is_donor', 'is_receiver']
+        fields = ['id', 'username', 'first_name', 'last_name', 'password', \
+                  'email', 'is_donor', 'is_receiver']
         extra_kwargs = {'password': {'write_only': True}}
 
-        def create(self, validated_data):
-            """ create user """
-            user = User.objects.create_user(**validated_data)
-            return user
+    def create(self, validated_data):
+        """ create user """
+        validated_data['password'] = make_password(validated_data['password'])
+        validated_data['is_active'] = True  # Hashing password
+        return super().create(validated_data)
 
 class DonationSerializer(serializers.ModelSerializer):
     """ Donation serialize """
