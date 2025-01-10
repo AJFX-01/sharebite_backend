@@ -8,6 +8,12 @@ class UserSerializer(serializers.ModelSerializer):
         """ meta """
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'is_donor', 'is_receiver']
+        extra_kwargs = {'password': {'write_only': True}}
+
+        def create(self, validated_data):
+            """ create user """
+            user = User.objects.create_user(**validated_data)
+            return user
 
 class DonationSerializer(serializers.ModelSerializer):
     """ Donation serialize """

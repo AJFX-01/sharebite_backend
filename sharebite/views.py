@@ -35,12 +35,12 @@ class LoginView(ObtainAuthToken):
         try:
             response = super().post(request, *args, **kwargs)
             token_key = response.data.get('token')
-            
             if not token_key:
-                raise AuthenticationFailed('Token generation failed. Please check your credentials.')
+                raise AuthenticationFailed(
+                    'Token generation failed. Please check your credentials.')
             try:
                 token = Token.objects.get(key=token_key)  # pylint: disable=no-member
-                user = token.user  
+                user = token.user
             except Token.DoesNotExist: # pylint: disable=no-member
                 return Response({'error': 'Invalid token. Authentication failed.'}, \
                                  status=status.HTTP_401_UNAUTHORIZED)
@@ -53,7 +53,6 @@ class LoginView(ObtainAuthToken):
                 'is_donor': getattr(user, 'is_donor', False),
                 'is_receiver': getattr(user, 'is_receiver', False),
             }
-            
             return Response({
                 'token': token.key,
                 'user_id': user_data,
@@ -61,7 +60,6 @@ class LoginView(ObtainAuthToken):
 
         except AuthenticationFailed as e:
             return Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
-        
         except Exception as e:
             return Response(f"error: invalid email or passwword, {e}",\
                              status=status.HTTP_400_BAD_REQUEST)
