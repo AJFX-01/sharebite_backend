@@ -7,10 +7,11 @@ from rest_framework.permissions import AllowAny
 from rest_framework import status, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from .models import Receipt, Donation, DropOffsite
 from .serializers import (
-    ReceiptSerializer, UserSerializer, DonationSerializer, ProofSerializer, DropOffSiteSerializer)
+     ReceiptSerializer, UserSerializer, DonationSerializer, ProofSerializer, DropOffSiteSerializer)
 
 
 # Register View
@@ -26,10 +27,28 @@ class RegisterView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Login View
-class LoginView(ObtainAuthToken):
-    """Method to login"""
 
+# Login View
+
+class LoginView(ObtainAuthToken):
+
+    """Method to login"""
+    permission_classes = [AllowAny]
+#     permission_classes = [AllowAny]
+#     def post(self, request, *args, **kwargs):
+#         data = request.data
+#         user = authenticate(username=data.get('username'), password=data.get('password'))
+#         if user:
+#             token, _ = Token.objects.get_or_create(user=user)
+#             return Response({
+#                 'token': token.key,
+#                 'user': {
+#                     'id': user.id,
+#                     'username': user.username,
+#                     'email': user.email,
+#                 }
+#             }, status=status.HTTP_200_OK)
+#         return Response({'error': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
     def post(self, request, *args, **kwargs):
         """POST method with error handling"""
         try:

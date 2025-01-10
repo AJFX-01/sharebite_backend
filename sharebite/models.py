@@ -11,18 +11,6 @@ class User(AbstractUser):
     is_donor = models.BooleanField(default=False)
     is_receiver = models.BooleanField(default=False)
 
-    # # Resolve clash by providing unique related_name
-    # groups = models.ManyToManyField(
-    #     Group,
-    #     related_name="custom_user_groups",  # Custom name to avoid clashes
-    #     blank=True
-    # )
-    # user_permissions = models.ManyToManyField(
-    #     Permission,
-    #     related_name="custom_user_permissions",  # Custom name to avoid clashes
-    #     blank=True
-    # )
-
 # Donations Model
 class Donation(models.Model):
     """ Base donation models """
@@ -34,7 +22,7 @@ class Donation(models.Model):
     is_delivered = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     reserved_by = models.ForeignKey(
-        User, null=True, blank=True, on_delete=models.SET_NULL, related_name='reserved_donations'
+        User, null=True, blank=True, on_delete=models.CASCADE, related_name='reserved_donations'
     )
 
     def cancel_reservation(self):
@@ -56,7 +44,7 @@ class DropOffsite(models.Model):
     """ Drop off sites """
     location = models.CharField(max_length=255)
     added_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name='added_sites')
+        User, on_delete=models.CASCADE, null=True, related_name='added_sites')
     created_at = models.DateTimeField(auto_now_add=True)
 
 # Reciepts
