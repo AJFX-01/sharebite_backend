@@ -34,21 +34,6 @@ class LoginView(ObtainAuthToken):
 
     """Method to login"""
     permission_classes = [AllowAny]
-#     permission_classes = [AllowAny]
-#     def post(self, request, *args, **kwargs):
-#         data = request.data
-#         user = authenticate(username=data.get('username'), password=data.get('password'))
-#         if user:
-#             token, _ = Token.objects.get_or_create(user=user)
-#             return Response({
-#                 'token': token.key,
-#                 'user': {
-#                     'id': user.id,
-#                     'username': user.username,
-#                     'email': user.email,
-#                 }
-#             }, status=status.HTTP_200_OK)
-#         return Response({'error': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
     def post(self, request, *args, **kwargs):
         """POST method with error handling"""
         try:
