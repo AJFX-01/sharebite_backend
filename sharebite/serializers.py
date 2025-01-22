@@ -18,20 +18,21 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data['is_active'] = True  # Hashing password
         return super().create(validated_data)
 
-class DonationSerializer(serializers.ModelSerializer):
-    """ Donation serialize """
-    class Meta:
-        """ meta """
-        model = Donation
-        fields = ['id','donor', 'title', 'description',\
-                   'location', 'is_reserved', 'is_delivered', 'created_at', 'reserved_by']
-
 class ProofSerializer(serializers.ModelSerializer):
     """ Proof Serializer """
     class Meta:
         """ meta """
         model = Proof
         fields = ['id', 'donation', 'proof_image', 'uploaded_by']
+
+class DonationSerializer(serializers.ModelSerializer):
+    """ Donation serialize """
+    proof = ProofSerializer(read_only=True)
+    class Meta:
+        """ meta """
+        model = Donation
+        fields = ['id','donor', 'title', 'description',\
+                   'location', 'is_reserved', 'is_delivered', 'created_at', 'reserved_by', 'proof']
 
 class DropOffSiteSerializer(serializers.ModelSerializer):
     """ Drop Serializer """

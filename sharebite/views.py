@@ -7,7 +7,6 @@ from rest_framework.permissions import AllowAny
 from rest_framework import status, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.exceptions import AuthenticationFailed
-from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from .models import Receipt, Donation, DropOffsite
 from .serializers import (

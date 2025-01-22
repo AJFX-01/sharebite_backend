@@ -31,12 +31,18 @@ class Donation(models.Model):
         self.reserved_by = None
         self.save()
 
+    def __str__(self):
+        return f"{self.title} - Donor: {self.donor.username}"
+
 # Proof Model
 class Proof(models.Model):
     """ Basic Proofs """
     donation = models.OneToOneField(Donation, on_delete=models.CASCADE, related_name='proof')
     proof_image = models.ImageField(upload_to='proofs/')
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Proof for Donation ID: {self.donation.id}"
 
 
 # Admin Drop- Off Sites
