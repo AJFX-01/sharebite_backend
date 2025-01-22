@@ -12,11 +12,25 @@ class UserSerializer(serializers.ModelSerializer):
                   'email', 'is_donor', 'is_receiver']
         extra_kwargs = {'password': {'write_only': True}}
 
+    # def create(self, validated_data):
+    #     """ create user """
+    #     validated_data['password'] = make_password(validated_data['password'])
+    #     validated_data['is_active'] = True  # Hashing password
+    #     return super().create(validated_data)
     def create(self, validated_data):
-        """ create user """
-        validated_data['password'] = make_password(validated_data['password'])
-        validated_data['is_active'] = True  # Hashing password
-        return super().create(validated_data)
+        """ Create user """
+        # Hash the password before saving
+        password = validated_data.pop('password', None)
+        is_donor = validated_data.pop('is_donor', False)
+        is_receiver = validated_data.pop('is_receiver', False)
+        
+        user = User(**validated_data)
+        if password:
+            user.set_password(password)  # Properly hashes the password
+        user.is_donor = is_donor
+        user.is_receiver = is_receiver
+        user.save()
+        return user
 
 class ProofSerializer(serializers.ModelSerializer):
     """ Proof Serializer """
