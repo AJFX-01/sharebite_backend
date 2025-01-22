@@ -1,9 +1,10 @@
 """ views """
 
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.hashers import make_password
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.exceptions import AuthenticationFailed
@@ -26,9 +27,21 @@ class RegisterView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# Edit View  
+class EditUserView(APIView):
+    """ Edit user information """
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        """ PUT method for updating user info """
+        user = request.user
+        serializer = UserSerializer(user, data=request.data, partial=True)  # Allow partial updates
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Login View
-
 class LoginView(ObtainAuthToken):
 
     """Method to login"""
@@ -48,6 +61,7 @@ class LoginView(ObtainAuthToken):
                 return Response({'error': 'Invalid token. Authentication failed.'}, \
                                  status=status.HTTP_401_UNAUTHORIZED)
             user_data = {
+                'token': token.key,
                 'id': user.id,
                 'username': user.username,
                 'email': user.email,
@@ -56,16 +70,35 @@ class LoginView(ObtainAuthToken):
                 'is_donor': getattr(user, 'is_donor', False),
                 'is_receiver': getattr(user, 'is_receiver', False),
             }
-            return Response({
-                'token': token.key,
-                'user_id': user_data,
-            }, status=status.HTTP_200_OK)
+            return Response(data=user_data, status=status.HTTP_200_OK)
 
         except AuthenticationFailed as e:
             return Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response(f"error: invalid email or passwword, {e}",\
                              status=status.HTTP_400_BAD_REQUEST)
+
+# Reset Password
+class ResetPasswordView(APIView):
+    """ Reset password """
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        """ PUT method for resetting password """
+        user = request.user
+        current_password = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+
+        if not current_password or not new_password:
+            return Response({'error': 'Current and new password are required.'},
+            status=status.HTTP_400_BAD_REQUEST)     
+        if not user.check_password(current_password):
+            return Response(
+                {'error': 'Current password is incorrect.'},
+                status=status.HTTP_400_BAD_REQUEST)
+        user.password = make_password(new_password)  # Hashing new password
+        user.save()
+        return Response({'message': 'Password updated successfully.'}, status=status.HTTP_200_OK)
 
 # Donation Views
 class DonationListView(APIView):

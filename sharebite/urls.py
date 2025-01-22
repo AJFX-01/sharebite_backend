@@ -3,12 +3,15 @@
 from django.urls import path
 from .views import (CancelPickupView, ReceiptHistoryView, RegisterView, LoginView,
                     DonationDetailView, DonationListView, ProofUploadView,
-                    DropOffSiteView, ReserveDonationView)
+                    DropOffSiteView, ReserveDonationView, EditUserView,
+                    ResetPasswordView)
 
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
+    path('edituser/', EditUserView.as_view(), name='edit-user'),
+    path('resetpassword/', ResetPasswordView.as_view(), name='reset-password'),
     path('donations/', DonationListView.as_view(), name='donation-list'),
     path('donations/<int:donation_id>/proof/', ProofUploadView.as_view(), name='proof-upload'),
     path('dropoff-sites/', DropOffSiteView.as_view(), name='dropoff-sites'),
