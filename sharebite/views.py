@@ -1,5 +1,5 @@
 """ views """
-
+import logging
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import make_password
 from rest_framework.views import APIView
@@ -14,6 +14,7 @@ from .serializers import (
      ReceiptSerializer, UserSerializer, DonationSerializer, ProofSerializer, DropOffSiteSerializer)
 
 
+logger = logging.getLogger(__name__)
 # Register View
 class RegisterView(APIView):
     """ METHOD CALL FOR REGISTER """
@@ -27,11 +28,11 @@ class RegisterView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Edit View  
+# Edit View
 class EditUserView(APIView):
     """ Edit user information """
     permission_classes = [IsAuthenticated]
-
+    # permission_classes = [AllowAny]
     def put(self, request):
         """ PUT method for updating user info """
         user = request.user

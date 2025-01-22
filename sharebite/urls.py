@@ -10,8 +10,8 @@ from .views import (CancelPickupView, ReceiptHistoryView, RegisterView, LoginVie
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
-    path('edituser/', EditUserView.as_view(), name='edit-user'),
-    path('resetpassword/', ResetPasswordView.as_view(), name='reset-password'),
+    path('edituser/', EditUserView.as_view(), name='edituser'),
+    path('resetpassword/', ResetPasswordView.as_view(), name='resetpassword'),
     path('donations/', DonationListView.as_view(), name='donation-list'),
     path('donations/<int:donation_id>/proof/', ProofUploadView.as_view(), name='proof-upload'),
     path('dropoff-sites/', DropOffSiteView.as_view(), name='dropoff-sites'),
