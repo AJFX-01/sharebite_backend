@@ -14,6 +14,10 @@ class User(AbstractUser):
 # Donations Model
 class Donation(models.Model):
     """ Base donation models """
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Successful', 'Successful'),
+    ]
     donor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='donations')
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -24,13 +28,14 @@ class Donation(models.Model):
     reserved_by = models.ForeignKey(
         User, null=True, blank=True, on_delete=models.CASCADE, related_name='reserved_donations'
     )
+    status = models.CharField(max_length=15, \
+                              choices=STATUS_CHOICES, default='Pending')  # Default status
 
     def cancel_reservation(self):
         """ Pick up of donation cancelled """
         self.is_delivered = False
         self.reserved_by = None
         self.save()
-
     def __str__(self):
         return f"{self.title} - Donor: {self.donor.username}"
 

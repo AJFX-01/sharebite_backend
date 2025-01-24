@@ -41,7 +41,8 @@ class DonationSerializer(serializers.ModelSerializer):
         """ meta """
         model = Donation
         fields = ['id','donor', 'title', 'description',\
-                   'location', 'is_reserved', 'is_delivered', 'created_at', 'reserved_by', 'proof']
+                   'location', 'is_reserved', 'is_delivered', 'created_at', \
+                    'reserved_by', 'proof', 'status']
 
 class DropOffSiteSerializer(serializers.ModelSerializer):
     """ Drop Serializer """

@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import make_password
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework import status, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.exceptions import AuthenticationFailed
@@ -126,6 +126,26 @@ class DonationDetailView(APIView):
         serializer = DonationSerializer(donation)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+# Update donation status
+class UpdateDonationStatusView(APIView):
+    """ Admin-only view to update donation status """
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, pk):
+        """ Update donation status """
+        try:
+            donation = Donation.objects.get(pk=pk)  # pylint: disable=no-member
+        except Donation.DoesNotExist:
+            return Response({"error": "Donation not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        status = request.data.get("status")
+        if status not in ["Pending", "Successful"]:
+            return Response({"error": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST)
+
+        donation.status = status
+        donation.save()
+        serializer = DonationSerializer(donation)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 # Admin Drop-Off Sites View
 class DropOffSiteView(APIView):
     """ DropOff sites """
