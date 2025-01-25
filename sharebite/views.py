@@ -9,7 +9,7 @@ from rest_framework import status, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authtoken.models import Token
-from .models import Receipt, Donation, DropOffsite
+from .models import Receipt, Donation, DropOffsite, User
 from .serializers import (
      ReceiptSerializer, UserSerializer, DonationSerializer, ProofSerializer, DropOffSiteSerializer)
 
@@ -172,7 +172,7 @@ class DropOffSiteView(APIView):
             serializer.save(added_by=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    def get(self):
+    def get(self, request):
         """ retrieve all site """
         sites = DropOffsite.objects.all() # pylint: disable=no-member
         serialzer = DropOffSiteSerializer(sites, many=True)
@@ -232,3 +232,15 @@ class ProofUploadView(APIView):
             serializer.save(donation=donation, uploaded_by=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Userslist
+class NonAdminUserListView(APIView):
+    """API to retrieve all users except admins"""
+    permission_classes = [IsAuthenticated]  # Restrict access to authenticated users
+
+    def get(self, request):
+        """ Get Requests """
+        # Filter out admins (staff and superusers)
+        non_admin_users = User.objects.filter(is_staff=False, is_superuser=False)
+        serializer = UserSerializer(non_admin_users, many=True)
+        return Response(serializer.data)

@@ -38,6 +38,7 @@ class DonationSerializer(serializers.ModelSerializer):
     """ Donation serialize """
     proof = ProofSerializer(read_only=True)
     donor = UserSerializer(read_only=True)
+    reserved_by = UserSerializer(read_only=True)
     class Meta:
         """ meta """
         model = Donation
@@ -47,6 +48,7 @@ class DonationSerializer(serializers.ModelSerializer):
 
 class DropOffSiteSerializer(serializers.ModelSerializer):
     """ Drop Serializer """
+    added_by = UserSerializer(read_only=True)
     class Meta:
         """ meta """
         model = DropOffsite

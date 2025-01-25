@@ -1,7 +1,7 @@
 """ URLs """
 
 from django.urls import path
-from .views import (CancelPickupView, ReceiptHistoryView, RegisterView, LoginView,
+from .views import (CancelPickupView, NonAdminUserListView, ReceiptHistoryView, RegisterView, LoginView,
                     DonationDetailView, DonationListView, ProofUploadView,
                     DropOffSiteView, ReserveDonationView, EditUserView,
                     ResetPasswordView, UpdateDonationStatusView, UserDonationsView)
@@ -12,6 +12,7 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('edituser/', EditUserView.as_view(), name='edituser'),
     path('resetpassword/', ResetPasswordView.as_view(), name='resetpassword'),
+    path('members/', NonAdminUserListView.as_view(), name='non-admin-users'),
     # Donations
     path('donations/', DonationListView.as_view(), name='donation-list'),
     path('donations/<int:pk>/status/', UpdateDonationStatusView.as_view(),\
