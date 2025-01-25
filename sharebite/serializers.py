@@ -26,6 +26,12 @@ class UserSerializer(serializers.ModelSerializer):
         user.is_receiver = is_receiver
         user.save()
         return user
+class LimitedUserSerializer(serializers.ModelSerializer):
+    """Custom serializer with conditional fields"""
+    class Meta:
+        """ Needed field """
+        model = User
+        fields = ['id', 'email', 'first_name', 'last_name']
 
 class ProofSerializer(serializers.ModelSerializer):
     """ Proof Serializer """
@@ -37,8 +43,8 @@ class ProofSerializer(serializers.ModelSerializer):
 class DonationSerializer(serializers.ModelSerializer):
     """ Donation serialize """
     proof = ProofSerializer(read_only=True)
-    donor = UserSerializer(read_only=True)
-    reserved_by = UserSerializer(read_only=True)
+    donor = LimitedUserSerializer(read_only=True)
+    reserved_by = LimitedUserSerializer(read_only=True)
     class Meta:
         """ meta """
         model = Donation
