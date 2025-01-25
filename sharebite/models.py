@@ -36,6 +36,7 @@ class Donation(models.Model):
         self.is_delivered = False
         self.reserved_by = None
         self.save()
+
     def __str__(self):
         return f"{self.title} - Donor: {self.donor.username}"
 

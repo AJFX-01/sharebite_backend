@@ -107,7 +107,7 @@ class DonationListView(APIView):
     def get(self, request):
         """ Get all donations"""
         donations = Donation.objects.all() # pylint: disable=no-member
-        serializer = DonationSerializer(donations, many=True)
+        serializer = DonationSerializer(donations, many=True, context={'request': request})
         return Response(serializer.data)
     def post(self, request):
         """ Save a new donation by particular user """

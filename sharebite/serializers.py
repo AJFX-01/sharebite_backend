@@ -52,6 +52,12 @@ class DonationSerializer(serializers.ModelSerializer):
                    'location', 'is_reserved', 'is_delivered', 'created_at', \
                     'reserved_by', 'proof', 'status']
 
+    def get_proof(self, obj):
+        """ GET FULL URL """
+        request = self.context.get('request')
+        if obj.proof:
+            return request.build_absolute_uri(obj.proof.url)
+        return None
 class DropOffSiteSerializer(serializers.ModelSerializer):
     """ Drop Serializer """
     added_by = UserSerializer(read_only=True)
