@@ -104,7 +104,7 @@ class ResetPasswordView(APIView):
 # Donation Views
 class DonationListView(APIView):
     """ Donations APIVIEWs"""
-    def get(self):
+    def get(self, request):
         """ Get all donations"""
         donations = Donation.objects.all() # pylint: disable=no-member
         serializer = DonationSerializer(donations, many=True)
@@ -113,7 +113,7 @@ class DonationListView(APIView):
         """ Save a new donation by particular user """
         serializer = DonationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(donor=request.user)
+            serializer.save(donor=request.user, status='Pending')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -135,17 +135,30 @@ class UpdateDonationStatusView(APIView):
         """ Update donation status """
         try:
             donation = Donation.objects.get(pk=pk)  # pylint: disable=no-member
-        except Donation.DoesNotExist:
+        except Donation.DoesNotExist: # pylint: disable=no-member
             return Response({"error": "Donation not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        status = request.data.get("status")
-        if status not in ["Pending", "Successful"]:
+        donation_status = request.data.get("status")
+        if donation_status not in ["Pending", "Successful"]:
             return Response({"error": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST)
 
-        donation.status = status
+        donation.status = donation_status
         donation.save()
         serializer = DonationSerializer(donation)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+# Retrieve Donations by a Particular User
+class UserDonationsView(APIView):
+    """ View to retrieve donations made by the authenticated user """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """ Get donations by the logged-in user """
+        donations = Donation.objects.filter(donor=request.user)  # pylint: disable=no-member
+        serializer = DonationSerializer(donations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 # Admin Drop-Off Sites View
 class DropOffSiteView(APIView):
     """ DropOff sites """

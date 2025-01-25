@@ -37,6 +37,7 @@ class ProofSerializer(serializers.ModelSerializer):
 class DonationSerializer(serializers.ModelSerializer):
     """ Donation serialize """
     proof = ProofSerializer(read_only=True)
+    donor = UserSerializer(read_only=True)
     class Meta:
         """ meta """
         model = Donation
