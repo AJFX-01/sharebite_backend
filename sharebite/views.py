@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework import status, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, NotFound
 from rest_framework.authtoken.models import Token
 from .models import Receipt, Donation, DropOffsite, User
 from .serializers import (
@@ -202,6 +202,31 @@ class ReserveDonationView(APIView):
         donation.save()
         return Response({"message": "Donation reserved successfully."}, status=status.HTTP_200_OK)
 
+#Reserved Donation
+class UserReservedDonationsView(APIView):
+    """
+    API to fetch all donations reserved by the authenticated user.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """ Get request """
+        # Fetch the authenticated user
+        user = request.user
+
+        # Fetch donations reserved by this user
+        reserved_donations = Donation.objects.filter(reserved_by=user) # pylint: disable=no-member
+
+        # Check if no donations are found
+        if not reserved_donations.exists():
+            raise NotFound("You have not reserved any donations.")
+
+        # Serialize the data
+        serializer = DonationSerializer(reserved_donations, many=True)
+
+        # Return the serialized data
+        return Response(serializer.data)
+    
 # View Receipt History
 class ReceiptHistoryView(APIView):
     """ Reciepts  Apis"""
@@ -236,6 +261,20 @@ class ProofUploadView(APIView):
         except Donation.DoesNotExist: # pylint: disable=no-member
             return Response({"error": "Donation not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = ProofSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(donation=donation, uploaded_by=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ReceiptUploadView(APIView):
+    """ PRoof Upload api """
+    def post(self, request, donation_id):
+        """ proof for a particular donation """
+        try:
+            donation = Donation.objects.get(pk=donation_id) # pylint: disable=no-member
+        except Donation.DoesNotExist: # pylint: disable=no-member
+            return Response({"error": "Donation not found"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ReceiptSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(donation=donation, uploaded_by=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -64,6 +64,7 @@ class Receipt(models.Model):
     """ Receipt Models """
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receipts')
     donation = models.ForeignKey(Donation, on_delete=models.CASCADE, related_name='receipts')
+    proof_image = models.ImageField(upload_to='receipts/')
     pickup_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
 
