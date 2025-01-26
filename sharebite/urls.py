@@ -5,7 +5,8 @@ from .views import (
   CancelPickupView, NonAdminUserListView, ReceiptHistoryView, RegisterView, LoginView,
                     DonationDetailView, DonationListView, ProofUploadView,
                     DropOffSiteView, ReserveDonationView, EditUserView,
-                    ResetPasswordView, UpdateDonationStatusView, UserDonationsView)
+                    ResetPasswordView, UpdateDonationStatusView,
+                    UserDonationsView, UserReservedDonationsView)
 
 
 urlpatterns = [
@@ -24,6 +25,9 @@ urlpatterns = [
     path('donations/<int:donation_id>/reserve/', ReserveDonationView.as_view(),
          name='reserve-donation'),
     path('donations/<int:donation_id>/', DonationDetailView.as_view(), name='donation-detail'),
+    path('donations/reserved/', UserReservedDonationsView.as_view(), \
+         name='user-reserved-donations'),
     path('receipts/', ReceiptHistoryView.as_view(), name='receipt-history'),
+    path('donations/<int:donation_id>/receipt/', ProofUploadView.as_view(), name='receipt-upload'),
     path('donations/<int:donation_id>/cancel/', CancelPickupView.as_view(), name='cancel-pickup'),
 ]

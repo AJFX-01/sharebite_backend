@@ -45,7 +45,7 @@ class ReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         """ meta """
         model = Receipt
-        fields = ['id', 'user', 'donation', 'pickup_date', 'created_at']
+        fields = ['id', 'user', 'donation', 'proof_image', 'pickup_date', 'created_at']
 
 class DonationSerializer(serializers.ModelSerializer):
     """ Donation serialize """
@@ -66,6 +66,14 @@ class DonationSerializer(serializers.ModelSerializer):
         if obj.proof:
             return request.build_absolute_uri(obj.proof.url)
         return None
+   
+    def get_receipt(self, obj):
+        """ GET FULL URL """
+        request = self.context.get('request')
+        if obj.receipt:
+            return request.build_absolute_uri(obj.receipt.url)
+        return None
+    
 class DropOffSiteSerializer(serializers.ModelSerializer):
     """ Drop Serializer """
     added_by = UserSerializer(read_only=True)
