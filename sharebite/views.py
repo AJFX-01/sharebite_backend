@@ -215,18 +215,17 @@ class UserReservedDonationsView(APIView):
         user = request.user
 
         # Fetch donations reserved by this user
-        reserved_donations = Donation.objects.filter(reserved_by=user) # pylint: disable=no-member
+        reserved_donations = Donation.objects.filter(reserved_by=user,) # pylint: disable=no-member
 
         # Check if no donations are found
         if not reserved_donations.exists():
             raise NotFound("You have not reserved any donations.")
 
         # Serialize the data
-        serializer = DonationSerializer(reserved_donations, many=True)
+        serializer = DonationSerializer(reserved_donations, many=True, context={'request': request})
 
         # Return the serialized data
         return Response(serializer.data)
-    
 # View Receipt History
 class ReceiptHistoryView(APIView):
     """ Reciepts  Apis"""
@@ -262,6 +261,8 @@ class ProofUploadView(APIView):
             return Response({"error": "Donation not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = ProofSerializer(data=request.data)
         if serializer.is_valid():
+            donation.is_delivered = True
+            donation.save()
             serializer.save(donation=donation, uploaded_by=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
