@@ -131,7 +131,15 @@ class UpdateDonationStatusView(APIView):
     """ Admin-only view to update donation status """
     permission_classes = [IsAdminUser]
 
-    def patch(self, request, pk):
+    # def options(self, request, *args, **kwargs):
+    #     """Handle preflight requests"""
+    #     return Response(status=200, headers={
+    #         "Access-Control-Allow-Origin": "http://localhost:4500",
+    #         "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+    #         "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    #     })
+
+    def put(self, request, pk):
         """ Update donation status """
         try:
             donation = Donation.objects.get(pk=pk)  # pylint: disable=no-member
@@ -155,7 +163,7 @@ class UserDonationsView(APIView):
     def get(self, request):
         """ Get donations by the logged-in user """
         donations = Donation.objects.filter(donor=request.user)  # pylint: disable=no-member
-        serializer = DonationSerializer(donations, many=True)
+        serializer = DonationSerializer(donations, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

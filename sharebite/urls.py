@@ -1,7 +1,8 @@
 """ URLs """
 
 from django.urls import path
-from .views import (CancelPickupView, NonAdminUserListView, ReceiptHistoryView, RegisterView, LoginView,
+from .views import (
+  CancelPickupView, NonAdminUserListView, ReceiptHistoryView, RegisterView, LoginView,
                     DonationDetailView, DonationListView, ProofUploadView,
                     DropOffSiteView, ReserveDonationView, EditUserView,
                     ResetPasswordView, UpdateDonationStatusView, UserDonationsView)
@@ -26,5 +27,3 @@ urlpatterns = [
     path('receipts/', ReceiptHistoryView.as_view(), name='receipt-history'),
     path('donations/<int:donation_id>/cancel/', CancelPickupView.as_view(), name='cancel-pickup'),
 ]
-
-

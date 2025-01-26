@@ -11,9 +11,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 from pathlib import Path
 
+
+from corsheaders.defaults import default_methods, default_headers
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+print("Allowed Methods:", default_methods)
+print("Allowed Headers:", default_headers)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -43,10 +47,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -147,21 +151,26 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4500",
     "https://localhost:4500",
 ]
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [
-    'GET',
-    'POST',
-    'PUT',
-    'PATCH',
-    'DELETE',
-    'OPTIONS',
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
 ]
+
 
 CORS_ALLOW_HEADERS = [
     'content-type',
     'authorization',
     'x-requested-with',
     'x-csrftoken',
+    "accept",
+    "origin",
+    "user-agent",
 ]
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:4500']

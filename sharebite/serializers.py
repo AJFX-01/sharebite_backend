@@ -40,17 +40,25 @@ class ProofSerializer(serializers.ModelSerializer):
         model = Proof
         fields = ['id', 'donation', 'proof_image', 'uploaded_by']
 
+class ReceiptSerializer(serializers.ModelSerializer):
+    """ Receipt seerialize """
+    class Meta:
+        """ meta """
+        model = Receipt
+        fields = ['id', 'user', 'donation', 'pickup_date', 'created_at']
+
 class DonationSerializer(serializers.ModelSerializer):
     """ Donation serialize """
     proof = ProofSerializer(read_only=True)
     donor = LimitedUserSerializer(read_only=True)
     reserved_by = LimitedUserSerializer(read_only=True)
+    receipt = ReceiptSerializer(read_only=True)
     class Meta:
         """ meta """
         model = Donation
         fields = ['id','donor', 'title', 'description',\
                    'location', 'is_reserved', 'is_delivered', 'created_at', \
-                    'reserved_by', 'proof', 'status']
+                    'reserved_by', 'proof', 'status', 'receipt']
 
     def get_proof(self, obj):
         """ GET FULL URL """
@@ -66,9 +74,3 @@ class DropOffSiteSerializer(serializers.ModelSerializer):
         model = DropOffsite
         fields = ['id', 'location', 'added_by', 'created_at']
 
-class ReceiptSerializer(serializers.ModelSerializer):
-    """ Receipt seerialize """
-    class Meta:
-        """ meta """
-        model = Receipt
-        fields = ['id', 'user', 'donation', 'pickup_date', 'created_at']
