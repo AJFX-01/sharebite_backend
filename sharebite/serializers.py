@@ -46,19 +46,25 @@ class ReceiptSerializer(serializers.ModelSerializer):
         """ meta """
         model = Receipt
         fields = ['id', 'user', 'donation', 'proof_image', 'pickup_date', 'created_at']
+class LReceiptSerializer(serializers.ModelSerializer):
+    """ Receipt seerialize """
+    class Meta:
+        """ meta """
+        model = Receipt
+        fields = ['id', 'proof_image', 'pickup_date', 'created_at']
 
 class DonationSerializer(serializers.ModelSerializer):
     """ Donation serialize """
     proof = ProofSerializer(read_only=True)
     donor = LimitedUserSerializer(read_only=True)
     reserved_by = LimitedUserSerializer(read_only=True)
-    receipt = ReceiptSerializer(read_only=True)
+    receipt = LReceiptSerializer(read_only=True)
     class Meta:
         """ meta """
         model = Donation
-        fields = ['id','donor', 'title', 'description',\
+        fields = ['id','donor', 'receipt', 'title', 'description',\
                    'location', 'is_reserved', 'is_delivered', 'created_at', \
-                    'reserved_by', 'proof', 'status', 'receipt']
+                    'reserved_by', 'proof', 'status',]
 
     def get_proof(self, obj):
         """ GET FULL URL """

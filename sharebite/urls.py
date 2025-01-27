@@ -2,7 +2,8 @@
 
 from django.urls import path
 from .views import (
-  CancelPickupView, NonAdminUserListView, ReceiptHistoryView, RegisterView, LoginView,
+  CancelPickupView, NonAdminUserListView, ReceiptHistoryView, ReceiptUploadView,
+  RegisterView, LoginView,
                     DonationDetailView, DonationListView, ProofUploadView,
                     DropOffSiteView, ReserveDonationView, EditUserView,
                     ResetPasswordView, UpdateDonationStatusView,
@@ -28,6 +29,7 @@ urlpatterns = [
     path('donations/reserved/', UserReservedDonationsView.as_view(), \
          name='user-reserved-donations'),
     path('receipts/', ReceiptHistoryView.as_view(), name='receipt-history'),
-    path('donations/<int:donation_id>/receipt/', ProofUploadView.as_view(), name='receipt-upload'),
+    path('donations/<int:donation_id>/receipt/', ReceiptUploadView.as_view(), \
+          name='receipt-upload'),
     path('donations/<int:donation_id>/cancel/', CancelPickupView.as_view(), name='cancel-pickup'),
 ]

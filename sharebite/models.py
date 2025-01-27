@@ -33,7 +33,7 @@ class Donation(models.Model):
 
     def cancel_reservation(self):
         """ Pick up of donation cancelled """
-        self.is_delivered = False
+        self.is_reserved = False
         self.reserved_by = None
         self.save()
 
@@ -62,8 +62,8 @@ class DropOffsite(models.Model):
 # Reciepts
 class Receipt(models.Model):
     """ Receipt Models """
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receipts')
-    donation = models.ForeignKey(Donation, on_delete=models.CASCADE, related_name='receipts')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receipt')
+    donation = models.OneToOneField(Donation, on_delete=models.CASCADE, related_name='receipt')
     proof_image = models.ImageField(upload_to='receipts/', null=True, blank=True)
     pickup_date = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)

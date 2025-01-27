@@ -277,7 +277,7 @@ class ReceiptUploadView(APIView):
             return Response({"error": "Donation not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = ReceiptSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(donation=donation, uploaded_by=request.user)
+            serializer.save(donation=donation, user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
