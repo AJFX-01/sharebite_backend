@@ -47,7 +47,7 @@ This API provides endpoints for managing donations, users, receipts, and drop-of
 ## Installation & Setup
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo.git
+   git clone https://github.com/AJFX-01/sharebite_backend.git
    cd your-repo
    ```
 2. Install dependencies:
@@ -75,5 +75,5 @@ This project is licensed under the MIT License.
 Feel free to submit issues or pull requests to improve the project.
 
 ## Contact
-For questions or collaboration, contact [your email].
+For questions or collaboration, contact [opeyemi.ajegbomogun@yahoo.com].
 
